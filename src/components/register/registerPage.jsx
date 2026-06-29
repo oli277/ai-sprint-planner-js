@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function RegistrationForm() {
   const [emailIn, setEmailIn] = useState("");
@@ -7,6 +8,7 @@ export default function RegistrationForm() {
   const [comfirmP, setConfP] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState([]);
+  const navigate = useNavigate()
 
   useEffect(() => {
       const fetchUsers = async () => {
@@ -71,12 +73,14 @@ export default function RegistrationForm() {
       })
 
       if(!send.ok){
-        throw new Error(`HTTP error! status: ${response.status}`)
+        throw new Error(`HTTP error! status: ${send.status}`)
       }
       setEmailIn('')
       setpass('')
       setConfP('')
       setUserName('')
+
+      navigate('/login')
 
      } catch(error){
       console.error('Error registering user: ', error);
@@ -140,7 +144,7 @@ export default function RegistrationForm() {
           <p className="text-[15px] text-gray-500">
             Already an existing member?{" "}
             <a
-              href="#"
+              href="/login"
               className="text-gray-700 underline hover:text-gray-900 transition-colors"
             >
               Login

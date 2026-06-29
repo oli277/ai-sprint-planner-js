@@ -23,10 +23,10 @@ function RegisterPage() {
       
      
 
-      {/* THE MAIN CONTENT AREA */}
+      
       <div className="flex-1 flex flex-col items-center overflow-y-auto py-16 px-8">
         
-        {/* CONTENT CONTAINER */}
+       
         <div className="w-full max-w-4xl flex flex-col gap-12">
           
           <Resgister />

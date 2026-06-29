@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginForm() {
   const [emailIn, setEmailIn] = useState("");
@@ -6,6 +7,7 @@ export default function LoginForm() {
   const [warningMsg, setWarningMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState([]);
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -36,6 +38,8 @@ export default function LoginForm() {
    setIsLoading(false)
    setEmailIn('')
    setpass('')
+
+   navigate("/ai")
   
    
     
@@ -92,7 +96,7 @@ export default function LoginForm() {
           <p className="text-[15px] text-gray-500">
             Don't have an account?{" "}
             <a
-              href="#"
+              href="/register"
               className="text-gray-700 underline hover:text-gray-900 transition-colors"
             >
               Signup

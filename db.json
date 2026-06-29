@@ -194,6 +194,38 @@
       "lastName": "My Last Name",
       "password": "DALLAS789",
       "id": "Zo1FlVkI8e0"
+    },
+    {
+      "userName": "iowa99",
+      "email": "iowa77@yahoo.com",
+      "firstName": "My First Name",
+      "lastName": "My Last Name",
+      "password": "iowa88",
+      "id": "x_UNhUrez_8"
+    },
+    {
+      "userName": "jasonMomoa88",
+      "email": "jasonmomoa22@gmail.com",
+      "firstName": "My First Name",
+      "lastName": "My Last Name",
+      "password": "jason123",
+      "id": "iSpuLbu2DyI"
+    },
+    {
+      "userName": "nick3",
+      "email": "nickadams325@outlook.com",
+      "firstName": "My First Name",
+      "lastName": "My Last Name",
+      "password": "nick123",
+      "id": "D7ovIbVYydE"
+    },
+    {
+      "userName": "naman22",
+      "email": "namanmishra@outlook.com",
+      "firstName": "My First Name",
+      "lastName": "My Last Name",
+      "password": "naman456",
+      "id": "ufneyLnWHNw"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
