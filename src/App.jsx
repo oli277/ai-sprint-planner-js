@@ -7,6 +7,7 @@ import Invite from "./components/pages/invite";
 import Login from "./components/pages/login";
 import Resister from "./components/pages/register";
 import Home from "./components/pages/home";
+import Team from "./components/pages/teams";
 
 function RouteFallback() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="/invite" element={<Invite />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Resister />} />
+          <Route path="/teams" element={<Team />} />
 
           <Route path="/" element={<Home />} />
           <Route path="/Home" element={<Home />} />

@@ -9,8 +9,19 @@ import {
   FaPlus,
   FaDiagramProject 
 } from 'react-icons/fa6';
+import { useNavigate } from "react-router-dom";
 
 export default function Aside() {
+
+  const navigate = useNavigate()
+
+  const navToAi = () =>{
+      navigate("/ai")
+  }
+
+  const navToInvite = () =>{
+      navigate("/invite")
+  }
   return (
     <aside className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col flex-shrink-0 hidden md:flex">
       
@@ -29,7 +40,7 @@ export default function Aside() {
         <div className="flex flex-col gap-2">
           
         
-          <div className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-100 hover:text-blue-600 rounded-lg cursor-pointer transition-colors">
+          <div onClick={() => navigate("/ai")} className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-100 hover:text-blue-600 rounded-lg cursor-pointer transition-colors">
             <FaDiagramProject className="text-lg" />
             <span className="font-medium">Build with AI</span>
           </div>
@@ -42,7 +53,7 @@ export default function Aside() {
 
 
           
-          <div className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-100 hover:text-blue-600 rounded-lg cursor-pointer transition-colors">
+          <div onClick={() => navigate("/invite")} className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-100 hover:text-blue-600 rounded-lg cursor-pointer transition-colors">
             <FaUsers className="text-lg" />
             <span className="font-medium">Invite code team</span>
           </div>
