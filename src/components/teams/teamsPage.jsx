@@ -1,40 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { FaRocket, FaShieldHalved, FaDiagramProject } from "react-icons/fa6";
 
-export default function TemplateCards() {
-  const [templates, setTemplates] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchTemplates = async () => {
-      try {
-
-        const get = await fetch('http://localhost:5000/teams')
-        if (!get.ok) throw new Error('Failed to fetch teams')
-        const data = await get.json()
-
-        setTemplates(data)
-
-      } catch (error) {
-        console.error("Error loading templates: ", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchTemplates()
-  }, [templates]);
-
+export default function TemplateCards({ templates, isLoading }) {
+  
   const getIconForTemplate = (id) => {
     switch (id) {
-      case "1":
-        return <FaRocket className="text-xl" />;
-      case "2":
-        return <FaShieldHalved className="text-xl" />;
-      case "3":
-        return <FaDiagramProject className="text-xl" />;
-      default:
-        return <FaRocket className="text-xl" />;
+      case "1": return <FaRocket className="text-xl" />;
+      default: return <FaRocket className="text-xl" />;
     }
   };
 
@@ -49,41 +21,23 @@ export default function TemplateCards() {
   }
 
   return (
-
     <>
-      <h2 className="text-xl font-bold text-gray-900">
-              Joined Teams
-            </h2>
-
-            <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-6">
-         
-            
-          
-
-      
-      {templates.map((template) => (
-        <div
-          key={template.id}
-          className="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:border-blue-200 hover:shadow-md cursor-pointer transition-all duration-200 flex flex-col group"
-          onClick={() => {
-            console.log(`Clicked template: ${template.name}`);
-          }}
-        >
-          <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mb-5 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-200">
-            {getIconForTemplate(template.id)}
+      <h2 className="text-xl font-bold text-gray-900">Joined Teams</h2>
+      <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-6">
+        {templates.map((template) => (
+          <div
+            key={template.id}
+            className="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:border-blue-200 hover:shadow-md cursor-pointer transition-all duration-200 flex flex-col group"
+            onClick={() => console.log(`Clicked template: ${template.name}`)}
+          >
+            <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mb-5 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-200">
+              {getIconForTemplate(template.id)}
+            </div>
+            <h3 className="text-gray-900 font-bold text-lg mb-2">{template.name}</h3>
+            <p className="text-gray-500 text-sm leading-relaxed">{template.description}</p>
           </div>
-
-          <h3 className="text-gray-900 font-bold text-lg mb-2">
-            {template.name}
-          </h3>
-          <p className="text-gray-500 text-sm leading-relaxed">
-            {template.description}
-          </p>
-        </div>
-      ))}
-    </div>
-
+        ))}
+      </div>
     </>
-    
   );
 }
