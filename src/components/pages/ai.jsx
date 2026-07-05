@@ -8,6 +8,7 @@ import Sidebar from '../ai/Sidebar';
 import PromptInput from '../ai/PromptInput';
 import TemplateCards from '../ai/TemplateCards';
 import RecentGenerations from '../ai/RecentGenerations';
+import ThemeToggle from '../ThemeToggle';
 
 
 
@@ -33,7 +34,7 @@ function AIpage() {
         
       
         <div className="w-full max-w-4xl flex flex-col gap-12">
-          
+          <ThemeToggle />
           <PromptInput />
           <TemplateCards />
           <RecentGenerations />
