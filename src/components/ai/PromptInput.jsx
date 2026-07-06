@@ -29,7 +29,7 @@ export default function PromptInput() {
       })
 
       if(!send.ok){
-        throw new Error(`HTTP error! status: ${response.status}`)
+        throw new Error(`HTTP error! status: ${send.status}`)
       }
       setPromptText('')
 
