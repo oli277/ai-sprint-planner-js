@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 export default function LoginForm() {
   const [emailIn, setEmailIn] = useState("");
   const [pass, setpass] = useState("");
-  const [error, seterror] = useState(false);
+  const [errorMsg, seterrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const navigate = useNavigate()
@@ -27,7 +27,10 @@ export default function LoginForm() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!emailIn.trim() || !pass.trim()) return;
+    if (!emailIn.trim() || !pass.trim()){
+      seterrorMsg("All fields are required")
+      return
+    };
     setIsLoading(true)
 
     const userCorrect = users.some(
@@ -36,11 +39,9 @@ export default function LoginForm() {
 
   if (userCorrect) {
     console.log("Successful login");
-    seterror(false);
     navigate("/ai"); 
   } else {
-    console.error("Failed login, wrong credentials");
-    seterror(true);
+    seterrorMsg("User not found, wrong email or password")
   }
 
    setIsLoading(false)
@@ -114,6 +115,14 @@ export default function LoginForm() {
           className="flex flex-col gap-4"
           onSubmit={handleLogin}
         >
+
+           {errorMsg.length > 0 && (
+            <div className="bg-red-50 border border-red-200 rounded-md p-3 text-center">
+              <p className="text-red-600 text-[13px] font-medium">
+                {errorMsg}
+              </p>
+            </div>
+          )}
           {/* Email Field */}
           <div className="flex flex-col gap-1.5">
             <label className="text-[13px] text-gray-500 ml-1" htmlFor="email">
