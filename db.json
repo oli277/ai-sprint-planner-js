@@ -256,6 +256,22 @@
       "lastName": "My Last Name",
       "password": "naman456",
       "id": "ufneyLnWHNw"
+    },
+    {
+      "userName": "oka7",
+      "email": "okaoka77@gmail.com",
+      "firstName": "Oka",
+      "lastName": "Koa",
+      "password": "OKA77",
+      "id": "-9CJAgPBfxE"
+    },
+    {
+      "userName": "ooo",
+      "email": "oliverad1905@gmail.com",
+      "firstName": "ooo",
+      "lastName": "ooo",
+      "password": "rrr4",
+      "id": "FOybs6VWChk"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

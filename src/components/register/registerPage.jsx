@@ -4,99 +4,103 @@ import { useNavigate } from "react-router-dom";
 export default function RegistrationForm() {
   const [emailIn, setEmailIn] = useState("");
   const [username, setUserName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [pass, setpass] = useState("");
   const [comfirmP, setConfP] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState([]);
-  const navigate = useNavigate()
+  const [formErrors, setFormErrors] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
-      const fetchUsers = async () => {
-        try {
-          const get = await fetch("http://localhost:5000/users");
-          if (!get.ok) throw new Error("Failed to fetch users");
-          const data = await get.json();
-  
-          setUsers(data);
-        } catch (error) {
-          console.error("Error loading users: ", error);
-        }
-      };
-  
-      fetchUsers();
-    }, []);
+    const fetchUsers = async () => {
+      try {
+        const get = await fetch("http://localhost:5000/users");
+        if (!get.ok) throw new Error("Failed to fetch users");
+        const data = await get.json();
 
-    const handleRegister = async (e) => {
+        setUsers(data);
+      } catch (error) {
+        console.error("Error loading users: ", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  const handleRegister = async (e) => {
     e.preventDefault();
-    if (!emailIn.trim() || !pass.trim() || !username.trim() || !comfirmP.trim()) return;
-    setIsLoading(true)
+    setIsLoading(true);
+    setFormErrors({});
+    let errors = {};
 
-    const userFalse = users.some(
-      (user) => user.userName === username.trim(),
-    );
+    if (
+      !emailIn.trim() ||
+      !pass.trim() ||
+      !username.trim() ||
+      !comfirmP.trim() ||
+      !firstName.trim() ||
+      !lastName.trim()
+    ) {
+      errors.general = "All fields are required";
+      errors.empty = true;
+    }
 
-    const emailFalse = users.some(
-      (user) => user.email === emailIn.trim(),
-    );
+    const userExists = users.some((user) => user.userName === username.trim());
+    const emailExists = users.some((user) => user.email === emailIn.trim());
 
-   if(userFalse) console.error('Register failed, username unavailable')
-   if(emailFalse) console.error('Register failed, email already registered')
+    if (userExists) errors.username = "Username unavailable";
+    if (emailExists) errors.email = "Email already registered";
 
-    if(userFalse || emailFalse){
-      setIsLoading(false)
-      return
-   }
+    if (pass !== comfirmP && pass.trim() !== "") {
+      errors.confirmP = "Passwords don't match";
+    }
 
-   if(!(pass === comfirmP)) {
-    console.error("Passwords don't match")
-    setIsLoading(false)
-    return
-   }
-   
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      setIsLoading(false);
+      return;
+    }
 
-  try {
-
+    try {
       const newUser = {
-      userName: username,
-      email: emailIn,
-      firstName: "My First Name",
-      lastName: "My Last Name",
-      password: pass
-      }
+        userName: username,
+        email: emailIn,
+        firstName: firstName,
+        lastName: lastName,
+        password: pass,
+      };
 
-      const send = await fetch('http://localhost:5000/users', {
-        method: 'POST',
+      const send = await fetch("http://localhost:5000/users", {
+        method: "POST",
         headers: {
-          'Content-Type' : 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(newUser)
-      })
+        body: JSON.stringify(newUser),
+      });
 
-      if(!send.ok){
-        throw new Error(`HTTP error! status: ${send.status}`)
+      if (!send.ok) {
+        throw new Error(`HTTP error! status: ${send.status}`);
       }
-      setEmailIn('')
-      setpass('')
-      setConfP('')
-      setUserName('')
 
-      navigate('/login')
+      setEmailIn("");
+      setpass("");
+      setConfP("");
+      setUserName("");
+      setFormErrors({});
 
-     } catch(error){
-      console.error('Error registering user: ', error);
-      
-     } finally {
-      setIsLoading(false)
-     }
-  
-   
-    
+      navigate("/login");
+    } catch (error) {
+      console.error("Error registering user: ", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA] px-4 font-sans text-gray-900">
       <div className="w-full max-w-[400px]">
-        {/* Header & Logo */}
         <div className="flex flex-col items-center mb-8">
           <div className="flex items-center gap-2 mb-6">
             <svg
@@ -153,10 +157,16 @@ export default function RegistrationForm() {
         </div>
 
         {/* Form */}
-        <form
-          className="flex flex-col gap-4"
-          onSubmit={handleRegister}
-        >
+        <form className="flex flex-col gap-4" onSubmit={handleRegister}>
+          {/* General Error Message */}
+          {formErrors.general && (
+            <div className="bg-red-50 border border-red-200 rounded-md p-3 text-center">
+              <p className="text-red-600 text-[13px] font-medium">
+                {formErrors.general}
+              </p>
+            </div>
+          )}
+
           {/* Username Field */}
           <div className="flex flex-col gap-1.5">
             <label
@@ -185,11 +195,28 @@ export default function RegistrationForm() {
                 id="username"
                 type="text"
                 value={username}
-                onChange={(e) => setUserName(e.target.value)}
+                onChange={(e) => {
+                  setUserName(e.target.value);
+                  setFormErrors({
+                    ...formErrors,
+                    username: null,
+                    general: null,
+                    empty: null,
+                  });
+                }}
                 disabled={isLoading}
-                className="w-full pl-11 pr-4 py-2.5 border border-gray-400 rounded-full focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-[14px] text-gray-700 bg-transparent placeholder-gray-400 transition-shadow"
+                className={`w-full pl-11 pr-4 py-2.5 border rounded-full focus:outline-none focus:ring-1 text-[14px] text-gray-700 bg-transparent transition-shadow ${
+                  (formErrors.empty && !username.trim()) || formErrors.username
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500 placeholder-red-300"
+                    : "border-gray-400 focus:border-blue-500 focus:ring-blue-500 placeholder-gray-400"
+                }`}
               />
             </div>
+            {formErrors.username && (
+              <p className="text-red-500 text-[12px] ml-2 mt-0.5">
+                {formErrors.username}
+              </p>
+            )}
           </div>
 
           {/* Email Field */}
@@ -217,9 +244,108 @@ export default function RegistrationForm() {
                 id="email"
                 type="email"
                 value={emailIn}
-                onChange={(e) => setEmailIn(e.target.value)}
+                onChange={(e) => {
+                  setEmailIn(e.target.value);
+                  setFormErrors({
+                    ...formErrors,
+                    email: null,
+                    general: null,
+                    empty: null,
+                  });
+                }}
                 disabled={isLoading}
-                className="w-full pl-11 pr-4 py-2.5 border border-gray-400 rounded-full focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-[14px] text-gray-700 bg-transparent placeholder-gray-400 transition-shadow"
+                className={`w-full pl-11 pr-4 py-2.5 border rounded-full focus:outline-none focus:ring-1 text-[14px] text-gray-700 bg-transparent transition-shadow ${
+                  (formErrors.empty && !emailIn.trim()) || formErrors.email
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500 placeholder-red-300"
+                    : "border-gray-400 focus:border-blue-500 focus:ring-blue-500 placeholder-gray-400"
+                }`}
+              />
+            </div>
+            {formErrors.email && (
+              <p className="text-red-500 text-[12px] ml-2 mt-0.5">
+                {formErrors.email}
+              </p>
+            )}
+          </div>
+
+          {/* first name Field */}
+          <div className="flex flex-col gap-1.5">
+            <label
+              className="text-[13px] text-gray-500 ml-1"
+              htmlFor="username"
+            >
+              First name <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+                  ></path>
+                </svg>
+              </div>
+              <input
+                id="firstName"
+                type="text"
+                value={firstName}
+                onChange={(e) => {
+                  setFirstName(e.target.value);
+                }}
+                disabled={isLoading}
+                className={`w-full pl-11 pr-4 py-2.5 border rounded-full focus:outline-none focus:ring-1 text-[14px] text-gray-700 bg-transparent transition-shadow ${
+                  formErrors.empty && !firstName.trim()
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500 placeholder-red-300"
+                    : "border-gray-400 focus:border-blue-500 focus:ring-blue-500 placeholder-gray-400"
+                }`}
+              />
+            </div>
+          </div>
+
+          {/* last name Field */}
+          <div className="flex flex-col gap-1.5">
+            <label
+              className="text-[13px] text-gray-500 ml-1"
+              htmlFor="username"
+            >
+              Last name <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+                  ></path>
+                </svg>
+              </div>
+              <input
+                id="lastName"
+                type="text"
+                value={lastName}
+                onChange={(e) => {
+                  setLastName(e.target.value);
+                }}
+                disabled={isLoading}
+                className={`w-full pl-11 pr-4 py-2.5 border rounded-full focus:outline-none focus:ring-1 text-[14px] text-gray-700 bg-transparent transition-shadow ${
+                  formErrors.empty && !lastName.trim()
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500 placeholder-red-300"
+                    : "border-gray-400 focus:border-blue-500 focus:ring-blue-500 placeholder-gray-400"
+                }`}
               />
             </div>
           </div>
@@ -252,9 +378,16 @@ export default function RegistrationForm() {
                 id="password"
                 type="password"
                 value={pass}
-                onChange={(e) => setpass(e.target.value)}
+                onChange={(e) => {
+                  setpass(e.target.value);
+                  setFormErrors({ ...formErrors, general: null, empty: null });
+                }}
                 disabled={isLoading}
-                className="w-full pl-11 pr-11 py-2.5 border border-gray-400 rounded-full focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-[14px] text-gray-700 bg-transparent placeholder-gray-400 transition-shadow"
+                className={`w-full pl-11 pr-11 py-2.5 border rounded-full focus:outline-none focus:ring-1 text-[14px] text-gray-700 bg-transparent transition-shadow ${
+                  formErrors.empty && !pass.trim()
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500 placeholder-red-300"
+                    : "border-gray-400 focus:border-blue-500 focus:ring-blue-500 placeholder-gray-400"
+                }`}
               />
               <div className="absolute inset-y-0 right-0 pr-4 flex items-center cursor-pointer text-gray-500 hover:text-gray-700">
                 <svg
@@ -307,9 +440,21 @@ export default function RegistrationForm() {
                 id="confirm-password"
                 type="password"
                 value={comfirmP}
-                onChange={(e) => setConfP(e.target.value)}
+                onChange={(e) => {
+                  setConfP(e.target.value);
+                  setFormErrors({
+                    ...formErrors,
+                    confirmP: null,
+                    general: null,
+                    empty: null,
+                  });
+                }}
                 disabled={isLoading}
-                className="w-full pl-11 pr-11 py-2.5 border border-gray-400 rounded-full focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-[14px] text-gray-700 bg-transparent placeholder-gray-400 transition-shadow"
+                className={`w-full pl-11 pr-11 py-2.5 border rounded-full focus:outline-none focus:ring-1 text-[14px] text-gray-700 bg-transparent transition-shadow ${
+                  (formErrors.empty && !comfirmP.trim()) || formErrors.confirmP
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500 placeholder-red-300"
+                    : "border-gray-400 focus:border-blue-500 focus:ring-blue-500 placeholder-gray-400"
+                }`}
               />
               <div className="absolute inset-y-0 right-0 pr-4 flex items-center cursor-pointer text-gray-500 hover:text-gray-700">
                 <svg
@@ -332,14 +477,22 @@ export default function RegistrationForm() {
                 </svg>
               </div>
             </div>
+            {formErrors.confirmP && (
+              <p className="text-red-500 text-[12px] ml-2 mt-0.5">
+                {formErrors.confirmP}
+              </p>
+            )}
           </div>
 
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full py-2.5 mt-2 bg-transparent border border-[#0052FF] text-[#0052FF] font-medium text-[15px] rounded-full hover:bg-blue-50 transition-colors"
+            disabled={isLoading}
+            className={`w-full py-2.5 mt-2 bg-transparent border border-[#0052FF] text-[#0052FF] font-medium text-[15px] rounded-full transition-colors ${
+              isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-50"
+            }`}
           >
-            Register
+            {isLoading ? "Registering..." : "Register"}
           </button>
         </form>
 
