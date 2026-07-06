@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 export default function LoginForm() {
   const [emailIn, setEmailIn] = useState("");
   const [pass, setpass] = useState("");
-  const [warningMsg, setWarningMsg] = useState("");
+  const [error, seterror] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const navigate = useNavigate()
@@ -34,13 +34,18 @@ export default function LoginForm() {
       (user) => user.email === emailIn.trim() && user.password === pass.trim(),
     );
 
-   userCorrect ? console.log('Successful login') && setWarningMsg('Succesful Login') : console.error('Login failed, wrong credentials') && setWarningMsg('Login failed, wrong email or password');
+  if (userCorrect) {
+    console.log("Successful login");
+    seterror(false);
+    navigate("/ai"); 
+  } else {
+    console.error("Failed login, wrong credentials");
+    seterror(true);
+  }
+
    setIsLoading(false)
    setEmailIn('')
    setpass('')
-
-   navigate("/ai")
-  
    
     
   };
